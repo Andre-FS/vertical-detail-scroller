@@ -250,7 +250,7 @@
         CGFloat completionPercentage = [self completionPercentageForScrollOffset:currentScrollValue];
         NSLog(@"%f", completionPercentage);
         [self.interactionController updateInteractiveTransition:completionPercentage / 100];
-        if(completionPercentage >= 38)
+        if(completionPercentage >= 80)
         {
             [self.interactionController finishInteractiveTransition];
             self.interactionController = nil;
@@ -286,7 +286,7 @@
         {
             CGFloat currentScrollValue = abs(scrollView.contentOffset.y);
             CGFloat completionPercentage = [self completionPercentageForScrollOffset:currentScrollValue];
-            if(completionPercentage > 25)
+            if(completionPercentage > 60)
             {
                 [self.interactionController finishInteractiveTransition];
             }else
@@ -346,10 +346,10 @@
 {
     if(isGoingForward)
     {
-        return (currentScrollValue - (self.scrollView.contentSize.height - self.scrollView.frame.size.height) - overscrollThreshold) * 100 / 400;
+        return (currentScrollValue - (self.scrollView.contentSize.height - self.scrollView.frame.size.height) - overscrollThreshold) * 100 / 200;
     }else
     {
-        return (currentScrollValue - overscrollThreshold) * 100 / 400;
+        return (currentScrollValue - overscrollThreshold) * 100 / 200;
     }
 }
 
