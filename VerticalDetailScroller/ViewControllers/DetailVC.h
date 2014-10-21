@@ -14,5 +14,6 @@
 @property (nonatomic, strong) UIColor *detailColor;
 @property (nonatomic, strong) ArrayDataSource *arrayDataSource;
 @property NSInteger detailPosition;
+@property BOOL isInteractiveTransition;
 
 @end
