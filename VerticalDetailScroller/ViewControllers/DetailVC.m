@@ -15,12 +15,41 @@
 
 @interface DetailVC () <UIScrollViewDelegate, UINavigationControllerDelegate>
 {
+    /**
+     *  Stores the value of the Y scroll offset when a swipe gesture is detected.
+     */
     CGFloat overscrollSwipeOriginY;
+    
+    /**
+     *  YES if transitioning to the next sibling, NO otherwise.
+     */
     BOOL isGoingForward;
+    
+    /**
+     *  Control flag to validate if it is possible to start a new transition at the moment.
+     */
+    BOOL canStartTransition;
+    
+    /**
+     *  YES if an animation is taking place, NO otherwise.
+     */
     BOOL isAnimating;
+    
+    /**
+     *  YES if there is a next sibling.
+     */
     BOOL isNextSiblingAvailable;
+    
+    /**
+     *  YES if there is a previous sibling.
+     */
     BOOL isPreviousSiblingAvailable;
     
+    /**
+     *  Overscroll required to trigger a transition.
+     *  OVERSCROLL_THRESHOLD_INTERACTIVE for interactive transitions.
+     *  OVERSCROLL_THRESHOLD_AUTOMATIC otherwise.
+     */
     NSInteger overscrollThreshold;
 }
 
@@ -30,7 +59,6 @@
 @property (weak, nonatomic) IBOutlet UILabel *labelNextSiblingHint;
 
 @property (nonatomic, strong) UIBarButtonItem *interactiveToggle;
-
 
 @property (strong, nonatomic) VerticalAnimator *animator;
 @property (strong, nonatomic) UIPercentDrivenInteractiveTransition *interactionController;
@@ -48,6 +76,7 @@
     else
         overscrollThreshold = OVERSCROLL_THRESHOLD_AUTOMATIC;
     
+    canStartTransition = NO;
     
     self.scrollView.backgroundColor = [UIColor lightGrayColor];
     self.scrollViewSpacer.backgroundColor = self.detailColor;
@@ -62,16 +91,29 @@
 
 - (void)viewWillAppear:(BOOL)animated
 {
+    [super viewWillAppear:animated];
+    
     [self.navigationController setNavigationBarHidden:NO animated:animated];
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
+    [super viewDidAppear:animated];
+    
+    canStartTransition = YES;
+    
+    //To make sure the viewControllers in the navigation controller stack only have one DetailVC.
+    NSArray *viewControllersInTheStack = self.navigationController.viewControllers;
+    NSArray *newStackOfViewControllers = @[viewControllersInTheStack.firstObject, viewControllersInTheStack.lastObject];
+    [self.navigationController setViewControllers:newStackOfViewControllers animated:NO];
+    
     [self.navigationController setDelegate:self];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
 {
+    [super viewWillDisappear:animated];
+    
     [self.navigationController setDelegate:nil];
 }
 
@@ -118,13 +160,12 @@
  */
 - (void)setupNavBarButton
 {
-    self.interactiveToggle = [[UIBarButtonItem alloc] initWithTitle:@"Switch to Interactive" style:UIBarButtonItemStylePlain target:self action:@selector(toggleInteractiveTransition)];
+    self.interactiveToggle = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStylePlain target:self action:@selector(toggleInteractiveTransition)];
     
     if(self.isInteractiveTransition)
         [self.interactiveToggle setTitle:@"Switch to Automatic"];
     else
         [self.interactiveToggle setTitle:@"Switch to Interactive"];
-    
     
     [self.navigationItem setRightBarButtonItem:self.interactiveToggle];
 }
@@ -154,9 +195,9 @@
  */
 - (void)navigateToNextSibling
 {
-    NSLog(@"NavigateToNextSibling");
     isAnimating = YES;
     isGoingForward = YES;
+    canStartTransition = NO;
     if(self.isInteractiveTransition)
         self.interactionController = [[UIPercentDrivenInteractiveTransition alloc] init];
     
@@ -169,9 +210,7 @@
     destination.detailColor = [UIColor colorWithJSONParsedDict:item[@"color"]];
     destination.isInteractiveTransition = self.isInteractiveTransition;
     
-    NSMutableArray *viewControllersInTheStack = [NSMutableArray arrayWithArray:self.navigationController.viewControllers];
-    [viewControllersInTheStack replaceObjectAtIndex:(viewControllersInTheStack.count - 1) withObject:destination];
-    [self.navigationController setViewControllers:viewControllersInTheStack animated:YES];
+    [self.navigationController pushViewController:destination animated:YES];
 }
 
 /**
@@ -179,9 +218,9 @@
  */
 - (void)navigateToPreviousSibling
 {
-    NSLog(@"NavigateToPreviousSibling");
     isAnimating = YES;
     isGoingForward = NO;
+    canStartTransition = NO;
     if(self.isInteractiveTransition)
         self.interactionController = [[UIPercentDrivenInteractiveTransition alloc] init];
     
@@ -194,10 +233,7 @@
     destination.detailColor = [UIColor colorWithJSONParsedDict:item[@"color"]];
     destination.isInteractiveTransition = self.isInteractiveTransition;
     
-    
-    NSMutableArray *viewControllersInTheStack = [NSMutableArray arrayWithArray:self.navigationController.viewControllers];
-    [viewControllersInTheStack replaceObjectAtIndex:(viewControllersInTheStack.count - 1) withObject:destination];
-    [self.navigationController setViewControllers:viewControllersInTheStack animated:YES];
+    [self.navigationController pushViewController:destination animated:YES];
 }
 
 
@@ -211,7 +247,7 @@
             return;
         
         CGFloat currentScrollValue = abs(scrollView.contentOffset.y);
-        CGFloat completionPercentage = (currentScrollValue - overscrollThreshold) * 100 / 400;
+        CGFloat completionPercentage = [self completionPercentageForScrollOffset:currentScrollValue];
         NSLog(@"%f", completionPercentage);
         [self.interactionController updateInteractiveTransition:completionPercentage / 100];
         if(completionPercentage >= 38)
@@ -221,22 +257,23 @@
         }
         return;
     }
-    
-    
-    int screenHeight = self.view.frame.size.height;
-    
-    if(isNextSiblingAvailable &&
-       [self isForwardOverscrollOriginValid] &&
-       overscrollSwipeOriginY < scrollView.contentOffset.y &&
-       scrollView.contentOffset.y > self.scrollView.contentSize.height - screenHeight + overscrollThreshold)
+    else if(canStartTransition)
     {
-        [self navigateToNextSibling];
+        int screenHeight = self.view.frame.size.height;
         
-    }else if(isPreviousSiblingAvailable &&
-             [self isBackwardOverscrollOriginValid] &&
-             scrollView.contentOffset.y < - overscrollThreshold)
-    {
-        [self navigateToPreviousSibling];
+        if(isNextSiblingAvailable &&
+           [self isForwardOverscrollOriginValid] &&
+           overscrollSwipeOriginY < scrollView.contentOffset.y &&
+           scrollView.contentOffset.y > self.scrollView.contentSize.height - screenHeight + overscrollThreshold)
+        {
+            [self navigateToNextSibling];
+            
+        }else if(isPreviousSiblingAvailable &&
+                 [self isBackwardOverscrollOriginValid] &&
+                 scrollView.contentOffset.y < - overscrollThreshold)
+        {
+            [self navigateToPreviousSibling];
+        }
     }
 }
 
@@ -248,7 +285,7 @@
         if(self.interactionController)
         {
             CGFloat currentScrollValue = abs(scrollView.contentOffset.y);
-            CGFloat completionPercentage = (currentScrollValue - overscrollThreshold) * 100 / 400;
+            CGFloat completionPercentage = [self completionPercentageForScrollOffset:currentScrollValue];
             if(completionPercentage > 25)
             {
                 [self.interactionController finishInteractiveTransition];
@@ -257,7 +294,7 @@
                 [self.interactionController cancelInteractiveTransition];
             }
             self.interactionController = nil;
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.25 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 isAnimating = NO;
             });
         }
@@ -267,7 +304,6 @@
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
 {
-    //Store the scroll Y origin.
     overscrollSwipeOriginY = scrollView.contentOffset.y;
 }
 
@@ -299,6 +335,25 @@
 }
 
 
+#pragma mark - Interactive Transition Progress
+
+/**
+ *  Calculates the completion percentage of the interactive transition for the current scroll offset.
+ *
+ *  @return A value from 0 to 100 representing the completion percentage.
+ */
+- (CGFloat)completionPercentageForScrollOffset:(CGFloat)currentScrollValue
+{
+    if(isGoingForward)
+    {
+        return (currentScrollValue - (self.scrollView.contentSize.height - self.scrollView.frame.size.height) - overscrollThreshold) * 100 / 400;
+    }else
+    {
+        return (currentScrollValue - overscrollThreshold) * 100 / 400;
+    }
+}
+
+
 #pragma mark - UINavigationControllerDelegate
 
 - (id<UIViewControllerAnimatedTransitioning>)navigationController:(UINavigationController *)navigationController animationControllerForOperation:(UINavigationControllerOperation)operation fromViewController:(UIViewController *)fromVC toViewController:(UIViewController *)toVC
@@ -316,9 +371,6 @@
 {
     return self.interactionController;
 }
-
-
-
 
 
 @end

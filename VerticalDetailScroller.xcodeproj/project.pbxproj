@@ -100,12 +100,12 @@
 		0E58B37119F525B2002CC8C7 /* VerticalDetailScroller */ = {
 			isa = PBXGroup;
 			children = (
-				0E58B3B819F559BC002CC8C7 /* Custom Animations */,
-				0E58B3B119F54397002CC8C7 /* Custom Views */,
-				0E58B3AC19F52D83002CC8C7 /* Controllers */,
-				0E58B3A519F52950002CC8C7 /* LocalResources */,
 				0E58B39F19F5283C002CC8C7 /* AppDelegate */,
 				0E58B3A819F52AFD002CC8C7 /* Categories */,
+				0E58B3AC19F52D83002CC8C7 /* Controllers */,
+				0E58B3B819F559BC002CC8C7 /* Custom Animations */,
+				0E58B3B119F54397002CC8C7 /* Custom Views */,
+				0E58B3A519F52950002CC8C7 /* LocalResources */,
 				0E58B39819F527FE002CC8C7 /* ViewControllers */,
 				0E58B37C19F525B2002CC8C7 /* Main.storyboard */,
 				0E58B37F19F525B2002CC8C7 /* Images.xcassets */,
@@ -516,6 +516,7 @@
 				0E58B39419F525B2002CC8C7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		0E58B39519F525B2002CC8C7 /* Build configuration list for PBXNativeTarget "VerticalDetailScrollerTests" */ = {
 			isa = XCConfigurationList;
@@ -524,6 +525,7 @@
 				0E58B39719F525B2002CC8C7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
