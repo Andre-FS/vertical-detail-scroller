@@ -11,8 +11,24 @@
 
 @interface DetailVC : UIViewController
 
+/**
+ *  Used as the background color of the view
+ */
 @property (nonatomic, strong) UIColor *detailColor;
+
+/**
+ *  The same dataSource as the one on ListVC. Used to allow navigation between detail siblings.
+ */
 @property (nonatomic, strong) ArrayDataSource *arrayDataSource;
+
+/**
+ *  The position of this detail on ListVC
+ */
 @property NSInteger detailPosition;
+
+/**
+ *  YES if the selected transition type is Interactive, NO otherwise.
+ */
+@property BOOL isInteractiveTransition;
 
 @end

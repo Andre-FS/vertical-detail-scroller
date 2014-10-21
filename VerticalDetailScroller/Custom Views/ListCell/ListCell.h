@@ -12,7 +12,12 @@
 
 @property (weak, nonatomic) IBOutlet UILabel *mainTitleLabel;
 
-
+/**
+ *  Prepare the cell with a title and cellColor
+ *
+ *  @param title
+ *  @param cellColor
+ */
 - (void)configureForTitle:(NSString *)title andColor:(UIColor *)cellColor;
 
 @end

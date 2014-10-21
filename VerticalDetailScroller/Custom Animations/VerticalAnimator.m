@@ -8,13 +8,14 @@
 
 #import "VerticalAnimator.h"
 
-const CGFloat PRESENT_DURATION = 0.5;
+#define PRESENT_DURATION 0.7f
+#define FROM_VIEW_FINAL_ALPHA 0.3f
 
 @implementation VerticalAnimator
 
 - (NSTimeInterval)transitionDuration:(id <UIViewControllerContextTransitioning>)transitionContext
 {
-    return 1;
+    return PRESENT_DURATION;
 }
 
 - (void)animateTransition:(id<UIViewControllerContextTransitioning>)transitionContext
@@ -28,44 +29,29 @@ const CGFloat PRESENT_DURATION = 0.5;
     
     [container addSubview:toVC.view];
     
+    CGRect newOriginFrame = sourceRect;
+    CGRect newDestinationFrame = sourceRect;
+    
     if(self.isBottomToTopAnimation)
     {
-        CGRect newOriginFrame = sourceRect;
         newOriginFrame.origin.y -= newOriginFrame.size.height;
-        
-        CGRect newDestinationFrame = sourceRect;
         newDestinationFrame.origin.y += newDestinationFrame.size.height;
-        toVC.view.frame = newDestinationFrame;
-        
-        [UIView animateWithDuration:PRESENT_DURATION delay:0 options:UIViewAnimationOptionCurveEaseIn animations:^{
-            toVC.view.frame = sourceRect;
-            fromVC.view.frame = newOriginFrame;
-            fromVC.view.alpha = 0;
-            
-        } completion:^(BOOL finished) {
-            [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
-        }];
     }else
     {
-        CGRect newOriginFrame = sourceRect;
         newOriginFrame.origin.y += newOriginFrame.size.height;
-        
-        CGRect newDestinationFrame = sourceRect;
         newDestinationFrame.origin.y -= newDestinationFrame.size.height;
-        toVC.view.frame = newDestinationFrame;
-        
-        [UIView animateWithDuration:PRESENT_DURATION delay:0 options:UIViewAnimationOptionCurveEaseIn animations:^{
-            toVC.view.frame = sourceRect;
-            fromVC.view.frame = newOriginFrame;
-            fromVC.view.alpha = 0;
-            
-        } completion:^(BOOL finished) {
-            [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
-        }];
     }
     
+    toVC.view.frame = newDestinationFrame;
     
-    
+    [UIView animateWithDuration:PRESENT_DURATION delay:0 options:UIViewAnimationOptionCurveEaseIn animations:^{
+        toVC.view.frame = sourceRect;
+        fromVC.view.frame = newOriginFrame;
+        fromVC.view.alpha = FROM_VIEW_FINAL_ALPHA;
+        
+    } completion:^(BOOL finished) {
+        [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
+    }];
 }
 
 @end
