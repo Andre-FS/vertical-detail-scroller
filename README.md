@@ -1,7 +1,9 @@
 Vertical Detail Scroller
 ========================
 
-**Highlights**
+### Version 1.0
+
+#####Highlights
 
  - TableView with automatically sized cells.
  - Vertical transition between detail views.
@@ -9,6 +11,11 @@ Vertical Detail Scroller
  - No UITableViewDataSource code in the ViewController.
  - Works in any orientation.
  
-**Notes**
+#####Notes
 
  Requires Xcode 6 and iOS 8. No external library used.
+ 
+
+### Future development
+
+ - Custom transition from the ListVC to the DetailVC
