@@ -39,7 +39,7 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"ListCell"];
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"ListCell"]; //ToDo: add the cell identifier to the ArrayDataSource init. Otherwise, no other cell type can be used by this DataSource.
     
     id item = self.sourceArray[indexPath.row];
     

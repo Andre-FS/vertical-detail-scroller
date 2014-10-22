@@ -9,6 +9,14 @@
 #import <UIKit/UIKit.h>
 #import "ArrayDataSource.h"
 
+
+/**
+ *  DetailVC shows a UIScrollView with layout built using Interface Builder.
+ *
+ *  By scrolling beyound the content size of the Scroll View, it is possible to trigger a vertical transition to another (sibling) DetailVC.
+ *
+ *  This transition can be automatic or interactive. There's a Button on the Navigation Bar to change the transition type.
+ */
 @interface DetailVC : UIViewController
 
 /**
