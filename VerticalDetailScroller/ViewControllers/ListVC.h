@@ -8,6 +8,12 @@
 
 #import <UIKit/UIKit.h>
 
+
+/**
+ *  ListVC shows a single UITableView with information loaded from LocalResources/list.json
+ *  
+ *  Cells are automatically sized according to their content by using AutoLayout.
+ */
 @interface ListVC : UIViewController
 
 @end

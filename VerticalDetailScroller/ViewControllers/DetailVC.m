@@ -94,6 +94,7 @@
     [super viewWillAppear:animated];
     
     [self.navigationController setNavigationBarHidden:NO animated:animated];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didChangeOrientation:) name:UIDeviceOrientationDidChangeNotification object:nil];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -115,6 +116,7 @@
     [super viewWillDisappear:animated];
     
     [self.navigationController setDelegate:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIDeviceOrientationDidChangeNotification object:nil];
 }
 
 
@@ -248,7 +250,6 @@
         
         CGFloat currentScrollValue = abs(scrollView.contentOffset.y);
         CGFloat completionPercentage = [self completionPercentageForScrollOffset:currentScrollValue];
-        NSLog(@"%f", completionPercentage);
         [self.interactionController updateInteractiveTransition:completionPercentage / 100];
         if(completionPercentage >= 80)
         {
@@ -352,6 +353,23 @@
         return (currentScrollValue - overscrollThreshold) * 100 / 200;
     }
 }
+
+
+#pragma mark - Orientation Notification
+
+- (void)didChangeOrientation:(NSNotification *)notification
+{
+    UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
+    if (orientation == UIInterfaceOrientationPortrait || orientation == UIInterfaceOrientationPortraitUpsideDown)
+    {
+        
+    }
+    else if (orientation == UIInterfaceOrientationLandscapeLeft || orientation == UIInterfaceOrientationLandscapeRight)
+    {
+        //ToDo: Change minimum completion values for the interactive transition
+    }
+}
+
 
 
 #pragma mark - UINavigationControllerDelegate
