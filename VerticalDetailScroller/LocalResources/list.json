@@ -1,0 +1,12 @@
+{
+    "data":
+    [
+     {"title": "Lorem ipsum dolor sit amet", "color":{"Green":150,"Blue":200,"Red":150}},
+     {"title": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.", "color":{"Green":150,"Blue":50,"Red":240}},
+     {"title": "Lorem ipsum dolor sit amet", "color":{"Green":175,"Blue":220,"Red":70}},
+     {"title": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", "color":{"Green":180,"Blue":60,"Red":160}},
+     {"title": "Lorem ipsum dolor sit amet", "color":{"Green":20,"Blue":15,"Red":150}},
+     {"title": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.", "color":{"Green":70,"Blue":140,"Red":20}},
+     {"title": "Lorem ipsum dolor sit amet", "color":{"Green":190,"Blue":25,"Red":220}}
+    ]
+}
